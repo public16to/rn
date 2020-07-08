@@ -1,6 +1,23 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 import { Icon, TabBar } from '@ant-design/react-native';
+import { Provider } from 'react-redux';
+import { create } from 'dva-core';
+import Todo from './src/pages/Todo';
+import todo from './src/models/todo';
+
+const app = create(); // 创建dva实例，可传递配置参数。https://dvajs.com/api/#app-dva-opts
+
+const models = [todo];
+models.forEach((o) => { // 装载models对象
+  app.model(o);
+});
+
+app.start(); // 实例初始化
+
+const store = app._store; // 获取redux的store对象供react-redux使用
+
+
 export default class BasicTabBarExample extends React.Component {
   constructor(props) {
     super(props);
@@ -22,6 +39,7 @@ export default class BasicTabBarExample extends React.Component {
   }
   render() {
     return (
+      <Provider store={store}>
       <TabBar
         unselectedTintColor="#949494"
         tintColor="#33A3F4"
@@ -29,12 +47,12 @@ export default class BasicTabBarExample extends React.Component {
         styles={{"tabs":{borderColor:"#f5f5f5",height:100}}}
       >
         <TabBar.Item
-          title="生活"
+          title="代办"
           icon={<Icon name="home" />}
           selected={this.state.selectedTab === 'tab1'}
           onPress={() => this.onChangeTab('tab1')}
         >
-          {this.renderContent('Life Tab')}
+          <Todo />
         </TabBar.Item>
         <TabBar.Item
           icon={<Icon name="ordered-list" />}
@@ -62,6 +80,7 @@ export default class BasicTabBarExample extends React.Component {
           {this.renderContent('My Tab')}
         </TabBar.Item>
       </TabBar>
+      </Provider>
     );
   }
 }
