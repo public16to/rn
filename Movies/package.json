@@ -21,6 +21,7 @@
     "@react-native-community/viewpager": "^4.0.1",
     "babel-plugin-import": "^1.13.0",
     "dva-core": "^2.0.2",
+    "dva-loading": "^3.0.20",
     "react": "16.11.0",
     "react-native": "0.62.2",
     "react-navigation": "^4.4.0",

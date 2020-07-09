@@ -1,9 +1,11 @@
 import { stringify } from 'qs';
 import request from '../utils/request';
 
-const API_PATH = "http://todo.16to.com"
+const API_PATH = "http://todo.16to.com";
+
 // 获取todo数据
 export async function getTodo(params) {
+  console.log(API_PATH)
   return request(`${API_PATH}/api/todo/?${stringify(params)}`);
 }
 
@@ -19,7 +21,7 @@ export async function addTodo(data) {
 }
 
 // 更新todo数据
-export async function updateTodo(id,data) {
+export async function updateTodo(id, data) {
   const { ...restParams } = data;
   return request(`/api/todo/${id}`, {
     method: 'PUT',
@@ -30,7 +32,7 @@ export async function updateTodo(id,data) {
 }
 
 // 更新todo tag
-export async function addTagTodo(id,data) {
+export async function addTagTodo(id, data) {
   const { ...restParams } = data;
   return request(`/api/todo/${id}`, {
     method: 'PUT',
@@ -41,7 +43,7 @@ export async function addTagTodo(id,data) {
 }
 
 // 更新todo notice
-export async function addNoticeTodo(id,data) {
+export async function addNoticeTodo(id, data) {
   const { ...restParams } = data;
   return request(`/api/todo/${id}`, {
     method: 'PUT',
@@ -59,12 +61,12 @@ export async function delTodo(id) {
 }
 
 // 获取配置信息
-export async function getTodoSetting(uid){
+export async function getTodoSetting(uid) {
   return request(`/api/setting/${uid}`);
 }
 
 // 修改配置信息
-export async function updateTodoSetting(uid,data){
+export async function updateTodoSetting(uid, data) {
   const { ...restParams } = data;
   return request(`/api/setting/${uid}`, {
     method: 'PUT',
@@ -75,7 +77,7 @@ export async function updateTodoSetting(uid,data){
 }
 
 // 发送验证码
-export async function sendCaptchaApi(data){
+export async function sendCaptchaApi(data) {
   const { ...restParams } = data;
   return request(`/api/captcha`, {
     method: 'POST',
@@ -86,7 +88,7 @@ export async function sendCaptchaApi(data){
 }
 
 // 登录
-export async function sendLoginApi(data){
+export async function sendLoginApi(data) {
   const { ...restParams } = data;
   return request(`/api/login`, {
     method: 'POST',
@@ -97,6 +99,6 @@ export async function sendLoginApi(data){
 }
 
 //  获取用户信息
-export async function  getSsoUser(uid){
+export async function getSsoUser(uid) {
   return request(`/api/user/${uid}`);
 }

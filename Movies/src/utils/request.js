@@ -1,6 +1,5 @@
-import {
-  Toast,
-} from '@ant-design/react-native';
+import { DeviceEventEmitter } from 'react-native';
+import { Toast } from '@ant-design/react-native';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -25,7 +24,7 @@ const checkStatus = response => {
     return response;
   }
   const errortext = codeMessage[response.status] || response.statusText;
-  Toast.fail(`请求错误 ${response.status}: ${response.url}`);
+  Toast.fail(`请求错误 ${response.status}: ${response.url}`,3);
   return false;
 };
 
@@ -74,6 +73,7 @@ export default function request(url, option) {
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(response => {
+      console.log(response);
       if (response.status === 204) {
         return response.text();
       }
@@ -81,5 +81,6 @@ export default function request(url, option) {
     })
     .catch(e => {
       // TODO 异常处理
+      Toast.offline('Network request failed !!!');
     });
 }
