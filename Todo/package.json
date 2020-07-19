@@ -12,6 +12,8 @@
   "dependencies": {
     "@ant-design/icons-react-native": "^2.2.1",
     "@ant-design/react-native": "^4.0.1",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-proposal-decorators": "^7.10.5",
     "@react-native-community/cameraroll": "^4.0.0",
     "@react-native-community/picker": "^1.6.5",
     "@react-native-community/segmented-control": "^2.1.0",
@@ -22,7 +24,8 @@
     "dva-loading": "^3.0.20",
     "react": "16.13.1",
     "react-native": "0.63.1",
-    "react-redux": "^7.2.0"
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.10.5",
