@@ -238,6 +238,8 @@ PODS:
   - React-jsinspector (0.63.1)
   - react-native-cameraroll (4.0.0):
     - React
+  - react-native-cookies (3.0.3):
+    - React
   - react-native-segmented-control (2.1.0):
     - React
   - react-native-slider (3.0.3):
@@ -348,6 +350,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
+  - "react-native-cookies (from `../node_modules/@react-native-community/cookies`)"
   - "react-native-segmented-control (from `../node_modules/@react-native-community/segmented-control`)"
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - "react-native-viewpager (from `../node_modules/@react-native-community/viewpager`)"
@@ -412,6 +415,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-cameraroll:
     :path: "../node_modules/@react-native-community/cameraroll"
+  react-native-cookies:
+    :path: "../node_modules/@react-native-community/cookies"
   react-native-segmented-control:
     :path: "../node_modules/@react-native-community/segmented-control"
   react-native-slider:
@@ -471,6 +476,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 7ab9cdcdd18d57652fb041f8a147fe9658d4e00a
   React-jsinspector: 2e28bb487e42dda6c94dbfa0c648d1343767a0fb
   react-native-cameraroll: ae0a7c0cc8462508855707ff623b1e789b692865
+  react-native-cookies: 7701c746be2c8f9ad73b2b8b6130efbfdbe1d145
   react-native-segmented-control: 4ce904755f67bf17d5250d265d57e40db045ac34
   react-native-slider: e99fc201cefe81270fc9d81714a7a0f5e566b168
   react-native-viewpager: 6f8c102e8081d70259252b254143b4193a9fb4cb
@@ -490,4 +496,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 86393f68423bbe126bd1a7b7bca4085ce4bd28eb
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.2

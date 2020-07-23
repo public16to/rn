@@ -72,7 +72,6 @@ export default function request(url, option) {
   return fetch(url, newOptions)
     .then(checkStatus)
     .then(response => {
-      console.log(response);
       if (response.status === 204) {
         return response.text();
       }

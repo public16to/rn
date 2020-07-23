@@ -5,7 +5,6 @@ const API_PATH = 'http://todo.16to.com';
 
 // 获取todo数据
 export async function getTodo(params) {
-  console.log(API_PATH);
   return request(`${API_PATH}/api/todo/?${stringify(params)}`);
 }
 

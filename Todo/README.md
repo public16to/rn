@@ -50,3 +50,39 @@ export default class HelloWorldApp extends Component {
   }
 }
 ```
+
+## cookie引入
+1. 命令行执行
+```bash
+yarn add @react-native-community/cookies
+cd ios && pod install
+```
+
+2. 使用
+```js
+import CookieManager from '@react-native-community/cookies';
+
+// set a cookie
+CookieManager.set('http://example.com', {
+  name: 'myCookie',
+  value: 'myValue',
+  domain: 'some domain',
+  path: '/',
+  version: '1',
+  expires: '2015-05-30T12:30:00.00-05:00'
+}).then((done) => {
+  console.log('CookieManager.set =>', done);
+});
+
+// Get cookies for a url
+CookieManager.get('http://example.com')
+  .then((cookies) => {
+    console.log('CookieManager.get =>', cookies);
+  });
+
+// clear cookies
+CookieManager.clearAll()
+  .then((success) => {
+    console.log('CookieManager.clearAll =>', success);
+  });
+```
