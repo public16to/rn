@@ -1,12 +1,18 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Text, View, StatusBar, StyleSheet } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, Portal, Button } from '@ant-design/react-native';
+import { Toast, Provider, Portal, Button, List } from '@ant-design/react-native';
+import moment from 'moment';
+
+moment.updateLocale('zh-cn', {
+  weekdays: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+});
+
+const Item = List.Item;
 
 @connect(({ todo, user, setting, loading }) => ({
-  list: todo.list,
+  todoList: todo.list,
   setting: setting.setting,
   ssoUser: user.ssoUser,
   loading: loading.effects['todo/select']
@@ -24,6 +30,7 @@ class Todo extends Component {
 
   componentDidMount() {
     this.getUserData();
+    this.getTodoData();
   }
 
   // 获取数据
@@ -49,7 +56,6 @@ class Todo extends Component {
       type: 'user/fetchUser',
     }).then(() => {
       const uid = CookieManager.get("http://todo.16to.com");
-      console.log(uid);
       if (uid === undefined) {
         window.location.href = "/login";
         return;
@@ -70,34 +76,50 @@ class Todo extends Component {
     this.getTodoData();
   }
 
+  // 显示列表元素
+  renderItem = (item) => {
+    return (
+      <View>
+        <Text>{item.title}</Text>
+      </View>
+    )
+  }
+
   render() {
-    const { list, ssoUser } = this.props;
+    const { todoList, ssoUser } = this.props;
     return (
       <Provider>
         <View style={styles.container}>
-          <StatusBar 
+          <StatusBar
             animated={true}
-
             translucent={false}
             barStyle={'dark-content'}
             showHideTransition={'fade'}
           />
         </View>
-        <View style={{ flex: 1 }}>
-          <Text>{ssoUser && ssoUser.name}</Text>
-          
+        <View>
+          <Text>{ssoUser && ssoUser.name} 代办事项</Text>
+          <Text>{moment().format("M月D日 dddd")}</Text>
         </View>
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text>
-            {list &&
-              list[Math.floor(Math.random() * (50 - 1 + 1) + 1)] &&
-              list[Math.floor(Math.random() * (50 - 1 + 1) + 1)].title}
-          </Text>
-          <Text>hello world1</Text>
-          <Button type="primary" onPress={() => this.showToast()}>
-            展示
-          </Button>
-        </View>
+        <ScrollView
+          style={{ flex: 1, backgroundColor: '#f5f5f9' }}
+          automaticallyAdjustContentInsets={false}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        >
+          <List>
+            {
+              todoList && todoList.map((item) => (
+                <Item wrap key={item.id}>
+                  {item.title}
+                </Item>
+              ))
+            }
+          </List>
+        </ScrollView>
+        <Button type="primary" onPress={() => this.showToast()}>
+          刷新
+        </Button>
       </Provider>
     );
   }
@@ -108,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height:34,
+    height: 34,
   },
 });
 
