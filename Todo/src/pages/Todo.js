@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { Component } from 'react';
-import { Text, View, StatusBar } from 'react-native';
+import { Text, View, StatusBar, StyleSheet } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import { Toast, Provider, Portal, Button } from '@ant-design/react-native';
@@ -22,7 +22,27 @@ class Todo extends Component {
   key = '';
   params = {};
 
-  componentDidMount() { 
+  componentDidMount() {
+    this.getUserData();
+  }
+
+  // 获取数据
+  getTodoData() {
+    const { dispatch } = this.props;
+    const params = {
+      uid: '06eb7955e21f832424c1833a1e9f9daf',
+    };
+    this.key = Toast.loading('Loading...');
+    dispatch({
+      type: 'todo/select',
+      params,
+    }).then((res) => {
+      Portal.remove(this.key); // 移除所有的toast
+    });
+  }
+
+  // 获取用户数据
+  getUserData() {
     const { dispatch } = this.props;
     // 获取用户信息
     dispatch({
@@ -37,43 +57,35 @@ class Todo extends Component {
       this.params.uid = uid;
       // 是否显示隐藏
       this.setState({
-        doneVisible: localStorage.getItem("doneVisible") !== 'false'
+        // doneVisible: localStorage.getItem("doneVisible") !== 'false'
       })
       // 获取todo setting
-      this.selectSetting();
-    });
-  }
-
-  // 获取数据
-  getData() {
-    const { dispatch } = this.props;
-    const params = {
-      uid: '06eb7955e21f832424c1833a1e9f9daf',
-    };
-    this.key = Toast.loading('Loading...');
-    dispatch({
-      type: 'todo/select',
-      params,
-    }).then((res) => {
-      Portal.remove(this.key); // 移除所有的toast
+      // this.selectSetting();
     });
   }
 
   // 展示弹框
   showToast() {
     // Toast.success('弹出展示成功');
-    this.getData();
+    this.getTodoData();
   }
 
   render() {
     const { list, ssoUser } = this.props;
     return (
       <Provider>
-        <StatusBar />
+        <View style={styles.container}>
+          <StatusBar 
+            animated={true}
+
+            translucent={false}
+            barStyle={'dark-content'}
+            showHideTransition={'fade'}
+          />
+        </View>
         <View style={{ flex: 1 }}>
-          <Text>
-            {ssoUser && ssoUser.name ? ssoUser.name : "匿名"}
-          </Text>
+          <Text>{ssoUser && ssoUser.name}</Text>
+          
         </View>
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>
@@ -90,4 +102,14 @@ class Todo extends Component {
     );
   }
 }
+
+//样式定义
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height:34,
+  },
+});
+
 export default Todo;

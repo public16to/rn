@@ -14,18 +14,20 @@ export default {
 
   effects: {
     // 获取SSO
-    *fetchUser(_, { call, put }) {
-      const cookies = yield call(CookieManager.get(TODO_URL));
-      const { uid } = cookies;
+    *fetchUser({}, { call, put }) {
+      // const cookies = yield call(CookieManager.get(TODO_URL));
+      // let { uid } = cookies;
+      const uid = '06eb7955e21f832424c1833a1e9f9daf';
       if (uid === undefined || uid === "undefined" || uid === null || uid === 'uid') {
-        window.location.href = "/login";
-        return {};
+        // window.location.href = "/login";
+        // return {};
       }
       const response = yield call(getSsoUser, uid);
       yield put({
         type: 'saveSsoUser',
         payload: response,
       });
+      console.log(response);
       return response;
     },
   },

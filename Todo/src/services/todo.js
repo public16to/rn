@@ -99,5 +99,6 @@ export async function sendLoginApi(data) {
 
 //  获取用户信息
 export async function getSsoUser(uid) {
-  return request(`/api/user/${uid}`);
+  console.log(uid);
+  return request(`${API_PATH}/api/user/${uid}`);
 }
