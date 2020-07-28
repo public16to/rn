@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView,RefreshControl } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import { Toast, Provider, Portal, Button, List } from '@ant-design/react-native';
@@ -39,7 +39,7 @@ class Todo extends Component {
     const params = {
       uid: '06eb7955e21f832424c1833a1e9f9daf',
     };
-    this.key = Toast.loading('Loading...');
+    this.key = Toast.loading('加载中...');
     dispatch({
       type: 'todo/select',
       params,
@@ -86,7 +86,7 @@ class Todo extends Component {
   }
 
   render() {
-    const { todoList, ssoUser } = this.props;
+    const { todoList, ssoUser, loading } = this.props;
     return (
       <Provider>
         <View style={styles.container}>
@@ -98,7 +98,7 @@ class Todo extends Component {
           />
         </View>
         <View>
-          <Text>{ssoUser && ssoUser.name} 代办事项</Text>
+          <Text>{ssoUser && ssoUser.name}</Text>
           <Text>{moment().format("M月D日 dddd")}</Text>
         </View>
         <ScrollView
@@ -106,6 +106,13 @@ class Todo extends Component {
           automaticallyAdjustContentInsets={false}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={loading}
+              onRefresh={() => this.getTodoData()}
+              title={'正在刷新...'}
+            />
+          }
         >
           <List>
             {
@@ -117,9 +124,6 @@ class Todo extends Component {
             }
           </List>
         </ScrollView>
-        <Button type="primary" onPress={() => this.showToast()}>
-          刷新
-        </Button>
       </Provider>
     );
   }
