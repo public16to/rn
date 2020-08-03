@@ -1,5 +1,5 @@
 // 引入所有的请求接口
-import { sendCaptchaApi,sendLoginApi } from '../services/todo';
+import { sendCaptchaApi, sendLoginApi } from '../services/todo';
 
 export default {
   // 空间名称
@@ -7,19 +7,19 @@ export default {
 
   // 状态值
   state: {
-    info:{},
+    info: {},
   },
 
   // action和数据异步处理
   effects: {
     // 发送验证码
-    *sendCaptcha({data}, { call }) {
-      const response = yield call(sendCaptchaApi,data);
+    *sendCaptcha({ data }, { call }) {
+      const response = yield call(sendCaptchaApi, data);
       return response;
     },
     // 登录
-    *login({data}, { call,put }) {
-      const response = yield call(sendLoginApi,data);
+    *login({ data }, { call, put }) {
+      const response = yield call(sendLoginApi, data);
       yield put({
         type: 'queryInfo',
         payload: response,
@@ -33,7 +33,7 @@ export default {
     queryInfo(state, action) {
       return {
         ...state,
-        info: action.payload
+        info: action.payload,
       };
     },
   },

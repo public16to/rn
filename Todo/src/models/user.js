@@ -9,7 +9,6 @@ export default {
   state: {
     // 获取用户信息
     ssoUser: {},
-
   },
 
   effects: {
@@ -18,7 +17,7 @@ export default {
       // const cookies = yield call(CookieManager.get(TODO_URL));
       // let { uid } = cookies;
       const uid = '06eb7955e21f832424c1833a1e9f9daf';
-      if (uid === undefined || uid === "undefined" || uid === null || uid === 'uid') {
+      if (uid === undefined || uid === 'undefined' || uid === null || uid === 'uid') {
         // window.location.href = "/login";
         // return {};
       }
@@ -36,8 +35,8 @@ export default {
     saveSsoUser(state, action) {
       return {
         ...state,
-        ssoUser: action.payload
-      }
+        ssoUser: action.payload,
+      };
     },
   },
 };

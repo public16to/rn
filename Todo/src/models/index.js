@@ -5,4 +5,4 @@ import send from './send';
 import setting from './setting';
 import user from './user';
 
-export default [todo, login, send, setting, user]
+export default [todo, login, send, setting, user];

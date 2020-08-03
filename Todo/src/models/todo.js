@@ -1,5 +1,5 @@
 // 引入所有的请求接口
-import { getTodo, delTodo,updateTodo,addTodo,addTagTodo,addNoticeTodo} from '../services/todo';
+import { getTodo, delTodo, updateTodo, addTodo, addTagTodo, addNoticeTodo } from '../services/todo';
 
 export default {
   // 空间名称
@@ -7,15 +7,15 @@ export default {
 
   // 状态值
   state: {
-    list:[],
+    list: [],
   },
 
   // action和数据异步处理
   effects: {
     // 查
-    *select({params}, { call, put }) {
-      const response = yield call(getTodo,params);
-      if(Array.isArray(response) === true){
+    *select({ params }, { call, put }) {
+      const response = yield call(getTodo, params);
+      if (Array.isArray(response) === true) {
         yield put({
           type: 'queryList',
           payload: response,
@@ -24,9 +24,9 @@ export default {
       return response;
     },
     // 增
-    *insert({ params,data }, { call, put }) {
+    *insert({ params, data }, { call, put }) {
       const response = yield call(addTodo, data);
-      if(Array.isArray(response) === true){
+      if (Array.isArray(response) === true) {
         // 重新获取数据
         yield put({
           type: 'select',
@@ -35,9 +35,9 @@ export default {
       }
     },
     // 删
-    *delete({ params,id }, { call, put }) {
+    *delete({ params, id }, { call, put }) {
       const response = yield call(delTodo, id);
-      if(Array.isArray(response) === true){
+      if (Array.isArray(response) === true) {
         // 重新获取数据
         yield put({
           type: 'select',
@@ -46,9 +46,11 @@ export default {
       }
     },
     // 改
-    *update({ params,id,data }, { call, put }) {
-      const response=yield call(updateTodo, id, data);
-      if(Array.isArray(response) === true){
+    *update({ params, id, data }, { call, put }) {
+      const response = yield call(updateTodo, id, data);
+      console.log(response);
+      console.log(params);
+      if (Array.isArray(response) === true) {
         // 获取修改后的数据
         yield put({
           type: 'select',
@@ -57,9 +59,9 @@ export default {
       }
     },
     // 标签处理
-    *tag({ params,id,data }, { call, put }) {
-      const response=yield call(addTagTodo, id, data);
-      if(Array.isArray(response) === true){
+    *tag({ params, id, data }, { call, put }) {
+      const response = yield call(addTagTodo, id, data);
+      if (Array.isArray(response) === true) {
         // 获取修改后的数据
         yield put({
           type: 'select',
@@ -68,9 +70,9 @@ export default {
       }
     },
     // 提醒修改
-    *notice({ params,id,data }, { call, put }) {
-      const response=yield call(addNoticeTodo, id, data);
-      if(Array.isArray(response) === true){
+    *notice({ params, id, data }, { call, put }) {
+      const response = yield call(addNoticeTodo, id, data);
+      if (Array.isArray(response) === true) {
         // 获取修改后的数据
         yield put({
           type: 'select',
@@ -85,7 +87,7 @@ export default {
     queryList(state, action) {
       return {
         ...state,
-        list: action.payload
+        list: action.payload,
       };
     },
   },
