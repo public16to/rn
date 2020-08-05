@@ -25,9 +25,12 @@ class Todo extends Component {
     settingVisible: false,
     noticeVisible: false,
     doneVisible: true,
+    refreshingLoading: false,
   };
   key = '';
-  params = {};
+  params = {
+    uid: '06eb7955e21f832424c1833a1e9f9daf',
+  };
 
   componentDidMount() {
     this.getUserData();
@@ -37,9 +40,6 @@ class Todo extends Component {
   // 获取数据
   getTodoData() {
     const { dispatch } = this.props;
-    this.params = {
-      uid: '06eb7955e21f832424c1833a1e9f9daf',
-    };
     this.key = Toast.loading('加载中...');
     dispatch({
       type: 'todo/select',
@@ -61,7 +61,6 @@ class Todo extends Component {
         window.location.href = '/login';
         return;
       }
-      this.params.uid = uid;
       // 是否显示隐藏
       this.setState({
         // doneVisible: localStorage.getItem("doneVisible") !== 'false'
@@ -92,16 +91,33 @@ class Todo extends Component {
     const data = {
       status,
     };
+    this.key = Toast.loading('加载中...');
     dispatch({
       type: 'todo/update',
       params: this.params,
       id,
       data,
+    }).then((res) => {
+      Portal.remove(this.key); // 移除所有的toast
     });
   };
 
+  // 下拉刷新
+  refresh() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'todo/select',
+      params: this.params,
+    }).then(() => {
+      this.setState({
+        refreshingLoading: false,
+      })
+    });
+  }
+
   render() {
     const { todoList, ssoUser, loading } = this.props;
+    const { refreshingLoading } = this.state;
     const doingData = [];
     const doneData = [];
     todoList &&
@@ -128,7 +144,7 @@ class Todo extends Component {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={() => this.getTodoData()} title={'正在刷新...'} />
+            <RefreshControl refreshing={refreshingLoading} onRefresh={() => this.refresh()} title={'正在刷新...'} />
           }
         >
           <List renderHeader={'未完成'}>
@@ -147,7 +163,10 @@ class Todo extends Component {
           <List renderHeader={'已完成'}>
             {doneData &&
               doneData.map((item) => (
-                <CheckboxItem checked key={item.id} checkboxStyle={{ color: '#ccc' }}>
+                <CheckboxItem checked
+                  onChange={() => {
+                    this.changeItem(item.id, 0);
+                  }} key={item.id} checkboxStyle={{ color: '#ccc' }}>
                   {item.title}
                 </CheckboxItem>
               ))}

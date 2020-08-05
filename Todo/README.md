@@ -86,3 +86,13 @@ CookieManager.clearAll()
     console.log('CookieManager.clearAll =>', success);
   });
 ```
+
+## 调试工具
+mac安装`react-native-debugger`  
+```bash
+brew cask install react-native-debugger
+```
+
+windows安装  
+`https://github.com/jhen0409/react-native-debugger`
+
