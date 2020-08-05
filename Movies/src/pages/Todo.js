@@ -33,7 +33,7 @@ class Todo extends Component {
     return (
       <Provider>
         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Text>{list && list[0] &&list[0].title}</Text>
+          <Text>{list && list[0] &&list[0].title}12345678</Text>
         </View>
       </Provider>
     );

@@ -1,4 +1,3 @@
-import { DeviceEventEmitter } from 'react-native';
 import { Toast } from '@ant-design/react-native';
 
 const codeMessage = {
@@ -80,7 +79,7 @@ export default function request(url, option) {
       return response.json();
     })
     .catch(e => {
-      // TODO 异常处理
+      // 异常处理
       Toast.offline('Network request failed !!!');
     });
 }

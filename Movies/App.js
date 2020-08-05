@@ -8,20 +8,12 @@ import Todo from './src/pages/Todo';
 import modelsArr from './src/models';
 
 const app = create(); // 创建dva实例，可传递配置参数。https://dvajs.com/api/#app-dva-opts
-
 app.use(createLoading()); // 增加loading属性
-
 modelsArr.forEach((o) => { // 装载models对象
   app.model(o);
 });
-
-
 app.start(); // 实例初始化
-
 const store = app._store; // 获取redux的store对象供react-redux使用
-
-import { Platform } from "react-native";
-console.log(Platform.OS); //ios或android
 
 export default class BasicTabBarExample extends React.Component {
   constructor(props) {

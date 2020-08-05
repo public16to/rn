@@ -362,7 +362,7 @@ DEPENDENCIES:
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
-  trunk:
+  https://mirrors.tuna.tsinghua.edu.cn/git/CocoaPods/Specs.git:
     - CocoaAsyncSocket
     - CocoaLibEvent
     - Flipper
@@ -490,4 +490,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 62d04c67dc2304eb8f84c6e1c7aa6baa36166afe
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.2
