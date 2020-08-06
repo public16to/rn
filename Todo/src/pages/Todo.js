@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, Portal, List, Checkbox } from '@ant-design/react-native';
+import { Toast, Provider, Portal, List, Checkbox, Button,Icon } from '@ant-design/react-native';
 import moment from 'moment';
 
 moment.updateLocale('zh-cn', {
@@ -138,6 +138,7 @@ class Todo extends Component {
           <Text>{ssoUser && ssoUser.name}</Text>
           <Text>{moment().format('M月D日 dddd')}</Text>
         </View>
+
         <ScrollView
           style={styles.scroll}
           automaticallyAdjustContentInsets={false}
@@ -172,6 +173,9 @@ class Todo extends Component {
               ))}
           </List>
         </ScrollView>
+        <View style={styles.addBtn}>
+          <Button type="primary" style={styles.button}><Icon name="plus" size={32} color="white" /></Button>
+        </View>
       </Provider>
     );
   }
@@ -188,6 +192,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f9',
   },
+  addBtn:{
+    position:"absolute",
+    right:32,
+    bottom:32,
+    zIndex:9999,
+  },
+  button:{
+    width:64,
+    height:64,
+    borderRadius:32,
+    shadowColor: '#666',
+    shadowOffset: { width: 2, height: 2 }, 
+    shadowOpacity: 0.6, 
+    shadowRadius: 6, 
+    elevation: 10, 
+  }
 });
 
 export default Todo;
