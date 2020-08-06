@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl,KeyboardAvoidingView,TextInput} from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, Portal, List, Checkbox, Button,Icon } from '@ant-design/react-native';
+import { Toast, Provider, Portal, List, Checkbox, Button, Icon } from '@ant-design/react-native';
 import moment from 'moment';
 
 moment.updateLocale('zh-cn', {
@@ -26,6 +26,7 @@ class Todo extends Component {
     noticeVisible: false,
     doneVisible: true,
     refreshingLoading: false,
+    addVisible: false,
   };
   key = '';
   params = {
@@ -117,7 +118,7 @@ class Todo extends Component {
 
   render() {
     const { todoList, ssoUser, loading } = this.props;
-    const { refreshingLoading } = this.state;
+    const { refreshingLoading, addVisible } = this.state;
     const doingData = [];
     const doneData = [];
     todoList &&
@@ -131,6 +132,7 @@ class Todo extends Component {
       });
     return (
       <Provider>
+
         <View style={styles.container}>
           <StatusBar animated={true} translucent={false} barStyle={'dark-content'} showHideTransition={'fade'} />
         </View>
@@ -138,7 +140,6 @@ class Todo extends Component {
           <Text>{ssoUser && ssoUser.name}</Text>
           <Text>{moment().format('M月D日 dddd')}</Text>
         </View>
-
         <ScrollView
           style={styles.scroll}
           automaticallyAdjustContentInsets={false}
@@ -173,8 +174,21 @@ class Todo extends Component {
               ))}
           </List>
         </ScrollView>
+        <KeyboardAvoidingView  behavior={Platform.OS == "ios" ? "padding" : null}>
+          <View style={{ paddingVertical: 20, paddingHorizontal: 20,bottom:0,zIndex:9999,backgroundColor:"#fff" }}>
+            <Text style={{ textAlign: 'center' }}>Content...</Text>
+            <TextInput
+              defaultValue="xx"
+              clear
+              placeholder="自动获取光标"
+              autoFocus
+            >
+              标题
+          </TextInput>
+          </View>
+          </KeyboardAvoidingView>
         <View style={styles.addBtn}>
-          <Button type="primary" style={styles.button}><Icon name="plus" size={32} color="white" /></Button>
+          <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}><Icon name="plus" size={32} color="white" /></Button>
         </View>
       </Provider>
     );
@@ -192,21 +206,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f9',
   },
-  addBtn:{
-    position:"absolute",
-    right:32,
-    bottom:32,
-    zIndex:9999,
+  addBtn: {
+    position: "absolute",
+    right: 32,
+    bottom: 32,
+    zIndex: 999,
   },
-  button:{
-    width:64,
-    height:64,
-    borderRadius:32,
+  button: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     shadowColor: '#666',
-    shadowOffset: { width: 2, height: 2 }, 
-    shadowOpacity: 0.6, 
-    shadowRadius: 6, 
-    elevation: 10, 
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+    elevation: 10,
   }
 });
 
