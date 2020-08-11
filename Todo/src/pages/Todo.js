@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl,KeyboardAvoidingView,TextInput} from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl, KeyboardAvoidingView } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, Portal, List, Checkbox, Button, Icon } from '@ant-design/react-native';
+import { Toast, Provider, Portal, List, Checkbox, Button, Icon, Modal, InputItem, WingBlank } from '@ant-design/react-native';
 import moment from 'moment';
 
 moment.updateLocale('zh-cn', {
@@ -19,19 +19,24 @@ const CheckboxItem = Checkbox.CheckboxItem;
   loading: loading.effects['todo/select'],
 }))
 class Todo extends Component {
-  state = {
-    addValue: '',
-    noticeValue: '',
-    settingVisible: false,
-    noticeVisible: false,
-    doneVisible: true,
-    refreshingLoading: false,
-    addVisible: false,
-  };
+
   key = '';
   params = {
     uid: '06eb7955e21f832424c1833a1e9f9daf',
   };
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      addValue: '',
+      noticeValue: '',
+      settingVisible: false,
+      noticeVisible: false,
+      doneVisible: true,
+      refreshingLoading: false,
+      addVisible: false,
+    };
+  }
 
   componentDidMount() {
     this.getUserData();
@@ -116,8 +121,43 @@ class Todo extends Component {
     });
   }
 
+  // 发送添加
+  sendAdd() {
+    const { addValue } = this.state;
+    if (addValue === "") {
+      Toast.warn('任务描述不能为空');
+      return;
+    }
+    if (addValue.length > 200) {
+      Toast.warn('任务描述过长，请不要超过200个字符');
+      return;
+    }
+    const { dispatch } = this.props;
+    const data = {
+      title: addValue,
+      uid: this.params.uid,
+    }
+    dispatch({
+      type: 'todo/insert',
+      params: this.params,
+      data
+    }).then(() => {
+      this.setState({
+        addVisible: false,
+        addValue: '',
+      })
+    })
+  }
+
+  // 内容变化
+  titleChange = (e) => {
+    this.setState({
+      addValue: e
+    });
+  }
+
   render() {
-    const { todoList, ssoUser, loading } = this.props;
+    const { todoList, ssoUser } = this.props;
     const { refreshingLoading, addVisible } = this.state;
     const doingData = [];
     const doneData = [];
@@ -174,22 +214,38 @@ class Todo extends Component {
               ))}
           </List>
         </ScrollView>
-        <KeyboardAvoidingView  behavior={Platform.OS == "ios" ? "padding" : null}>
-          <View style={{ paddingVertical: 20, paddingHorizontal: 20,bottom:0,zIndex:9999,backgroundColor:"#fff" }}>
-            <Text style={{ textAlign: 'center' }}>Content...</Text>
-            <TextInput
-              defaultValue="xx"
-              clear
-              placeholder="自动获取光标"
-              autoFocus
-            >
-              标题
-          </TextInput>
-          </View>
-          </KeyboardAvoidingView>
         <View style={styles.addBtn}>
           <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}><Icon name="plus" size={32} color="white" /></Button>
         </View>
+        <Modal
+          transparent={false}
+          visible={addVisible}
+          animationType="slide-down"
+          maskClosable
+          onClose={() => { this.setState({ addVisible: false }) }}
+        >
+          <View style={{ flex:1,paddingVertical: 220 }}>
+            <InputItem
+              clear
+              placeholder="自动获取光标"
+              autoFocus
+              onChange={this.titleChange}
+            >
+              标题
+          </InputItem>
+          </View>
+          <WingBlank
+            style={{
+              marginTop: 20,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Button type="ghost" onPress={() => this.setState({ addVisible: false })}>返回</Button>
+            <Button type="primary" onPress={() => this.sendAdd()}>添加</Button>
+          </WingBlank>
+        </Modal>
       </Provider>
     );
   }
@@ -210,7 +266,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: 32,
     bottom: 32,
-    zIndex: 999,
+    zIndex: 9999,
   },
   button: {
     width: 64,

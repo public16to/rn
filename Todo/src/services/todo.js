@@ -11,7 +11,7 @@ export async function getTodo(params) {
 // 新增todo数据
 export async function addTodo(data) {
   const { ...restParams } = data;
-  return request('/api/todo', {
+  return request(`${API_PATH}/api/todo`, {
     method: 'POST',
     body: {
       ...restParams,
