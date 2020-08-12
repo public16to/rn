@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl, KeyboardAvoidingView } from 'react-native';
+import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl, Platform } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import { Toast, Provider, Portal, List, Checkbox, Button, Icon, Modal, InputItem, WingBlank } from '@ant-design/react-native';
@@ -41,6 +41,7 @@ class Todo extends Component {
   componentDidMount() {
     this.getUserData();
     this.getTodoData();
+    this.fixStatusBar();
   }
 
   // 获取数据
@@ -156,6 +157,15 @@ class Todo extends Component {
     });
   }
 
+  // 修复android status bar
+  fixStatusBar = () => {
+    if (Platform.OS === 'android') {
+      StatusBar.setTranslucent(true);
+      StatusBar.setBackgroundColor('transparent');
+    }
+  }
+
+
   render() {
     const { todoList, ssoUser } = this.props;
     const { refreshingLoading, addVisible } = this.state;
@@ -172,9 +182,8 @@ class Todo extends Component {
       });
     return (
       <Provider>
-
         <View style={styles.container}>
-          <StatusBar animated={true} translucent={false} barStyle={'dark-content'} showHideTransition={'fade'} />
+          <StatusBar animated={true} translucent={false} barStyle={"dark-content"} backgroundColor="#fff" showHideTransition={'fade'} />
         </View>
         <View>
           <Text>{ssoUser && ssoUser.name}</Text>
@@ -213,6 +222,9 @@ class Todo extends Component {
                 </CheckboxItem>
               ))}
           </List>
+          <List renderHeader={'我是有底线的'}>
+
+          </List>
         </ScrollView>
         <View style={styles.addBtn}>
           <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}><Icon name="plus" size={32} color="white" /></Button>
@@ -224,7 +236,7 @@ class Todo extends Component {
           maskClosable
           onClose={() => { this.setState({ addVisible: false }) }}
         >
-          <View style={{ flex:1,paddingVertical: 220 }}>
+          <View style={{ flex: 1, paddingVertical: 220 }}>
             <InputItem
               clear
               placeholder="自动获取光标"
@@ -256,7 +268,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 34,
+    height: Platform.OS === 'ios'?34:0,
   },
   scroll: {
     flex: 1,
