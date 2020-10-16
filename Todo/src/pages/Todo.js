@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl, Platform } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, Portal, List, Checkbox, Button, Icon, Modal, InputItem, WingBlank } from '@ant-design/react-native';
+import { Toast, Provider, WhiteSpace,Portal,Badge, List, Checkbox, Button, Icon, Modal, InputItem, WingBlank } from '@ant-design/react-native';
 import moment from 'moment';
+import TodoItem from './TodoItem';
 
 moment.updateLocale('zh-cn', {
   weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -77,12 +78,6 @@ class Todo extends Component {
     });
   }
 
-  // 展示弹框
-  showToast() {
-    // Toast.success('弹出展示成功');
-    this.getTodoData();
-  }
-
   // 显示列表元素
   renderItem = (item) => {
     return (
@@ -95,17 +90,19 @@ class Todo extends Component {
   // 改变状态
   changeItem = (id, status) => {
     const { dispatch } = this.props;
+    console.log(11111);
     const data = {
-      status,
+      status:status===1?0:1,
     };
-    this.key = Toast.loading('加载中...');
+
+    // this.key = Toast.loading('加载中...');
     dispatch({
       type: 'todo/update',
       params: this.params,
       id,
       data,
     }).then((res) => {
-      Portal.remove(this.key); // 移除所有的toast
+      // Portal.remove(this.key); // 移除所有的toast
     });
   };
 
@@ -198,33 +195,17 @@ class Todo extends Component {
             <RefreshControl refreshing={refreshingLoading} onRefresh={() => this.refresh()} title={'正在刷新...'} />
           }
         >
-          <List renderHeader={'未完成'}>
-            {doingData &&
-              doingData.map((item) => (
-                <CheckboxItem
-                  onChange={() => {
-                    this.changeItem(item.id, 1);
-                  }}
-                  key={item.id}
-                >
-                  {item.title}
-                </CheckboxItem>
-              ))}
-          </List>
-          <List renderHeader={'已完成'}>
-            {doneData &&
-              doneData.map((item) => (
-                <CheckboxItem checked
-                  onChange={() => {
-                    this.changeItem(item.id, 0);
-                  }} key={item.id} checkboxStyle={{ color: '#ccc' }}>
-                  {item.title}
-                </CheckboxItem>
-              ))}
-          </List>
-          <List renderHeader={'我是有底线的'}>
-
-          </List>
+          <View style={styles.title}>
+            <WingBlank>
+              <WhiteSpace />
+              <View style={{flexDirection: 'row',justifyContent: 'space-between'}}>
+                <Text style={styles.doingTitle}>未完成</Text>
+                <View style={styles.doingCount}><Text style={styles.doingCountStr}>{doingData.length}</Text></View>
+              </View>
+              <WhiteSpace />
+            </WingBlank>
+          </View>
+          <TodoItem todoList={doingData} changeItem={this.changeItem} />
         </ScrollView>
         <View style={styles.addBtn}>
           <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}><Icon name="plus" size={32} color="white" /></Button>
@@ -289,6 +270,25 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     shadowRadius: 6,
     elevation: 10,
+  },
+  title:{
+    lineHeight:32,
+  },
+  doingTitle:{
+    fontSize:18,
+    lineHeight:24,
+  },
+  doingCount:{
+    height:24,
+    width:24,
+    borderRadius:12,
+    backgroundColor:"#ff4d4f",
+  },
+  doingCountStr:{
+    color:"#fff",
+    textAlign:"center",
+    fontWeight:"bold",
+    lineHeight:24,
   }
 });
 
