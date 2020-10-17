@@ -18,15 +18,14 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-const checkStatus = response => {
+const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
-  const errortext = codeMessage[response.status] || response.statusText;
-  Toast.fail(`请求错误 ${response.status}: ${response.url}`,3);
+  // const errortext = codeMessage[response.status] || response.statusText;
+  // Toast.fail(`请求错误 ${response.status}: ${response.url}`, 3);
   return false;
 };
-
 
 /**
  * Requests a URL, returning a promise.
@@ -48,11 +47,7 @@ export default function request(url, option) {
     credentials: 'include',
   };
   const newOptions = { ...defaultOptions, ...options };
-  if (
-    newOptions.method === 'POST' ||
-    newOptions.method === 'PUT' ||
-    newOptions.method === 'DELETE'
-  ) {
+  if (newOptions.method === 'POST' || newOptions.method === 'PUT' || newOptions.method === 'DELETE') {
     if (!(newOptions.body instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
@@ -71,13 +66,13 @@ export default function request(url, option) {
 
   return fetch(url, newOptions)
     .then(checkStatus)
-    .then(response => {
+    .then((response) => {
       if (response.status === 204) {
         return response.text();
       }
       return response.json();
     })
-    .catch(e => {
+    .catch((e) => {
       // 异常处理
       Toast.offline('Network request failed !!!');
     });
