@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { WhiteSpace, WingBlank, Button } from '@ant-design/react-native';
+import moment from 'moment';
+import momentLocal from 'moment/locale/zh-cn';
+
+moment.defineLocale('zh-cn', momentLocal);
 
 class TodoItem extends Component {
   constructor(props) {
@@ -19,6 +23,11 @@ class TodoItem extends Component {
                 <View style={styles.box}>
                   <Text style={styles.title}>{item.title}</Text>
                   <View style={styles.btnBox}>
+                    <Text style={styles.addtime}>
+                      {type === 'done'
+                        ? moment(item.updatetime).format('YYYY-MM-DD HH:mm:ss')
+                        : moment(item.addtime).fromNow()}
+                    </Text>
                     <Button type="ghost" style={styles.btn} onPress={() => changeItem(item.id, item.status)}>
                       {type === 'done' ? '已完成' : '完成'}
                     </Button>
@@ -46,6 +55,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     lineHeight: 24,
+    flexWrap: 'nowrap',
   },
   btnBox: {
     marginTop: 8,
@@ -53,11 +63,17 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   btn: {
-    fontSize: 16,
-    height: 32,
+    fontSize: 14,
+    height: 28,
     paddingRight: 8,
     paddingLeft: 8,
     borderRadius: 16,
+  },
+  addtime: {
+    lineHeight: 28,
+    marginRight: 8,
+    fontSize: 14,
+    color: '#666',
   },
 });
 

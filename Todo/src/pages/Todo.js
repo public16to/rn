@@ -226,7 +226,7 @@ class Todo extends Component {
               <View style={styles.titleBox}>
                 <Text style={styles.doneTitle} onPress={() => this.showHideDone()}>
                   已完成
-                  <View style={styles.pt4}>
+                  <View style={styles.eyeBox}>
                     <Icon name={doneVisible ? 'eye' : 'eye-invisible'} style={styles.eysBtn} />
                   </View>
                 </Text>
@@ -281,9 +281,6 @@ class Todo extends Component {
 
 //样式定义
 const styles = StyleSheet.create({
-  pt4: {
-    paddingTop: 4,
-  },
   container: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -334,7 +331,9 @@ const styles = StyleSheet.create({
   },
   doneTitle: {
     fontSize: 18,
-    lineHeight: 24,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    // lineHeight:,
   },
   doingCount: {
     height: 24,
@@ -355,6 +354,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     lineHeight: 24,
+  },
+  eyeBox: {
+    paddingLeft: 4,
+    paddingTop: 6,
+    height: 24,
   },
   eysBtn: {
     fontSize: 22,
