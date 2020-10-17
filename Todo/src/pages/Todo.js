@@ -4,7 +4,7 @@ import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import { Toast, Provider, WhiteSpace, Portal, Button, Icon, WingBlank } from '@ant-design/react-native';
 import moment from 'moment';
-import TodoItem from './TodoItem';
+import TodoItem from './components/TodoItem';
 
 moment.updateLocale('zh-cn', {
   weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -167,7 +167,7 @@ class Todo extends Component {
   };
 
   render() {
-    const { todoList, ssoUser } = this.props;
+    const { todoList, ssoUser, navigation } = this.props;
     const { refreshingLoading, doneVisible } = this.state;
     const doingData = [];
     const doneData = [];
@@ -218,7 +218,7 @@ class Todo extends Component {
               <WhiteSpace />
             </WingBlank>
           </View>
-          <TodoItem todoList={doingData} changeItem={this.changeItem} />
+          <TodoItem todoList={doingData} changeItem={this.changeItem} navigation={navigation} />
           <View style={styles.listTitle}>
             <WingBlank>
               <WhiteSpace />
@@ -238,10 +238,16 @@ class Todo extends Component {
               <WhiteSpace />
             </WingBlank>
           </View>
-          {doneVisible ? <TodoItem todoList={doneData} changeItem={this.changeItem} type="done" /> : null}
+          {doneVisible ? (
+            <TodoItem todoList={doneData} changeItem={this.changeItem} type="done" navigation={navigation} />
+          ) : null}
         </ScrollView>
         <View style={styles.addBtn}>
-          <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}>
+          <Button
+            type="primary"
+            style={styles.button}
+            onPress={() => navigation.navigate('Detail', { type: 'add', title: '新建代办' })}
+          >
             <Icon name="plus" size={32} color="white" />
           </Button>
         </View>

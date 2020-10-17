@@ -13,7 +13,8 @@ class TodoItem extends Component {
   }
 
   render() {
-    const { todoList, changeItem, type } = this.props;
+    const { todoList, changeItem, type, navigation } = this.props;
+    console.log(todoList, navigation);
     return (
       <View>
         {todoList &&
@@ -21,7 +22,12 @@ class TodoItem extends Component {
             <WingBlank key={item.id}>
               <View>
                 <View style={styles.box}>
-                  <Text style={styles.title}>{item.title}</Text>
+                  <Text
+                    style={styles.title}
+                    onPress={() => navigation.navigate('Detail', { type: 'update', id: item.id, title: '修改代办' })}
+                  >
+                    {item.title}
+                  </Text>
                   <View style={styles.btnBox}>
                     <Text style={styles.addtime}>
                       {type === 'done'
