@@ -2,16 +2,13 @@ import React, { Component } from 'react';
 import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl, Platform } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, WhiteSpace,Portal,Badge, List, Checkbox, Button, Icon, Modal, InputItem, WingBlank } from '@ant-design/react-native';
+import { Toast, Provider, WhiteSpace, Portal, Button, Icon, WingBlank } from '@ant-design/react-native';
 import moment from 'moment';
 import TodoItem from './TodoItem';
 
 moment.updateLocale('zh-cn', {
   weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
 });
-
-const Item = List.Item;
-const CheckboxItem = Checkbox.CheckboxItem;
 
 @connect(({ todo, user, setting, loading }) => ({
   todoList: todo.list,
@@ -20,7 +17,6 @@ const CheckboxItem = Checkbox.CheckboxItem;
   loading: loading.effects['todo/select'],
 }))
 class Todo extends Component {
-
   key = '';
   params = {
     uid: '06eb7955e21f832424c1833a1e9f9daf',
@@ -90,19 +86,19 @@ class Todo extends Component {
   // 改变状态
   changeItem = (id, status) => {
     const { dispatch } = this.props;
-    console.log(11111);
+    console.log('changeItem', id, status);
     const data = {
-      status:status===1?0:1,
+      status: status === 1 ? 0 : 1,
     };
 
-    // this.key = Toast.loading('加载中...');
+    this.key = Toast.loading('加载中...');
     dispatch({
       type: 'todo/update',
       params: this.params,
       id,
       data,
     }).then((res) => {
-      // Portal.remove(this.key); // 移除所有的toast
+      Portal.remove(this.key); // 移除所有的toast
     });
   };
 
@@ -115,14 +111,14 @@ class Todo extends Component {
     }).then(() => {
       this.setState({
         refreshingLoading: false,
-      })
+      });
     });
   }
 
   // 发送添加
   sendAdd() {
     const { addValue } = this.state;
-    if (addValue === "") {
+    if (addValue === '') {
       Toast.warn('任务描述不能为空');
       return;
     }
@@ -134,25 +130,25 @@ class Todo extends Component {
     const data = {
       title: addValue,
       uid: this.params.uid,
-    }
+    };
     dispatch({
       type: 'todo/insert',
       params: this.params,
-      data
+      data,
     }).then(() => {
       this.setState({
         addVisible: false,
         addValue: '',
-      })
-    })
+      });
+    });
   }
 
   // 内容变化
   titleChange = (e) => {
     this.setState({
-      addValue: e
+      addValue: e,
     });
-  }
+  };
 
   // 修复android status bar
   fixStatusBar = () => {
@@ -160,12 +156,19 @@ class Todo extends Component {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('transparent');
     }
-  }
+  };
 
+  // 隐藏已完成的
+  showHideDone = () => {
+    const { doneVisible } = this.state;
+    this.setState({
+      doneVisible: !doneVisible,
+    });
+  };
 
   render() {
     const { todoList, ssoUser } = this.props;
-    const { refreshingLoading, addVisible } = this.state;
+    const { refreshingLoading, doneVisible } = this.state;
     const doingData = [];
     const doneData = [];
     todoList &&
@@ -180,11 +183,17 @@ class Todo extends Component {
     return (
       <Provider>
         <View style={styles.container}>
-          <StatusBar animated={true} translucent={false} barStyle={"dark-content"} backgroundColor="#fff" showHideTransition={'fade'} />
+          <StatusBar
+            animated={true}
+            translucent={false}
+            barStyle={'dark-content'}
+            backgroundColor="#fff"
+            showHideTransition={'fade'}
+          />
         </View>
-        <View>
-          <Text>{ssoUser && ssoUser.name}</Text>
-          <Text>{moment().format('M月D日 dddd')}</Text>
+        <View style={styles.headerBox}>
+          <Text style={styles.headerTitle}>{ssoUser && ssoUser.name}</Text>
+          <Text style={styles.headerTitle}>{moment().format('M月D日 dddd')}</Text>
         </View>
         <ScrollView
           style={styles.scroll}
@@ -195,22 +204,48 @@ class Todo extends Component {
             <RefreshControl refreshing={refreshingLoading} onRefresh={() => this.refresh()} title={'正在刷新...'} />
           }
         >
-          <View style={styles.title}>
+          <View style={styles.listTitle}>
             <WingBlank>
               <WhiteSpace />
-              <View style={{flexDirection: 'row',justifyContent: 'space-between'}}>
+              <WhiteSpace />
+              <View style={styles.titleBox}>
                 <Text style={styles.doingTitle}>未完成</Text>
-                <View style={styles.doingCount}><Text style={styles.doingCountStr}>{doingData.length}</Text></View>
+                <View style={styles.doingCount}>
+                  <Text style={styles.countStr}>{doingData.length}</Text>
+                </View>
               </View>
+              <WhiteSpace />
               <WhiteSpace />
             </WingBlank>
           </View>
           <TodoItem todoList={doingData} changeItem={this.changeItem} />
+          <View style={styles.listTitle}>
+            <WingBlank>
+              <WhiteSpace />
+              <WhiteSpace />
+              <View style={styles.titleBox}>
+                <Text style={styles.doneTitle} onPress={() => this.showHideDone()}>
+                  已完成
+                  <View style={styles.pt4}>
+                    <Icon name={doneVisible ? 'eye' : 'eye-invisible'} style={styles.eysBtn} />
+                  </View>
+                </Text>
+                <View style={styles.doneCount}>
+                  <Text style={styles.countStr}>{doneData.length}</Text>
+                </View>
+              </View>
+              <WhiteSpace />
+              <WhiteSpace />
+            </WingBlank>
+          </View>
+          {doneVisible ? <TodoItem todoList={doneData} changeItem={this.changeItem} type="done" /> : null}
         </ScrollView>
         <View style={styles.addBtn}>
-          <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}><Icon name="plus" size={32} color="white" /></Button>
+          <Button type="primary" style={styles.button} onPress={() => this.setState({ addVisible: true })}>
+            <Icon name="plus" size={32} color="white" />
+          </Button>
         </View>
-        <Modal
+        {/* <Modal
           transparent={false}
           visible={addVisible}
           animationType="slide-down"
@@ -238,7 +273,7 @@ class Todo extends Component {
             <Button type="ghost" onPress={() => this.setState({ addVisible: false })}>返回</Button>
             <Button type="primary" onPress={() => this.sendAdd()}>添加</Button>
           </WingBlank>
-        </Modal>
+        </Modal> */}
       </Provider>
     );
   }
@@ -246,18 +281,33 @@ class Todo extends Component {
 
 //样式定义
 const styles = StyleSheet.create({
+  pt4: {
+    paddingTop: 4,
+  },
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: Platform.OS === 'ios'?34:0,
+    height: Platform.OS === 'ios' ? 34 : 0,
   },
   scroll: {
     flex: 1,
     backgroundColor: '#f5f5f9',
   },
+  headerBox: {
+    height: 45,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  headerTitle: {
+    lineHeight: 45,
+    fontSize: 18,
+    marginRight: 20,
+  },
   addBtn: {
-    position: "absolute",
-    right: 32,
+    position: 'absolute',
+    right: 16,
     bottom: 32,
     zIndex: 9999,
   },
@@ -271,25 +321,45 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     elevation: 10,
   },
-  title:{
-    lineHeight:32,
+  listTitle: {
+    lineHeight: 32,
   },
-  doingTitle:{
-    fontSize:18,
-    lineHeight:24,
+  titleBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  doingCount:{
-    height:24,
-    width:24,
-    borderRadius:12,
-    backgroundColor:"#ff4d4f",
+  doingTitle: {
+    fontSize: 18,
+    lineHeight: 24,
   },
-  doingCountStr:{
-    color:"#fff",
-    textAlign:"center",
-    fontWeight:"bold",
-    lineHeight:24,
-  }
+  doneTitle: {
+    fontSize: 18,
+    lineHeight: 24,
+  },
+  doingCount: {
+    height: 24,
+    minWidth: 24,
+    borderRadius: 12,
+    backgroundColor: '#ff4d4f',
+  },
+  doneCount: {
+    height: 24,
+    minWidth: 24,
+    borderRadius: 12,
+    backgroundColor: '#999',
+  },
+  countStr: {
+    color: '#fff',
+    paddingLeft: 4,
+    paddingRight: 4,
+    textAlign: 'center',
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+  eysBtn: {
+    fontSize: 22,
+    color: '#333',
+  },
 });
 
 export default Todo;

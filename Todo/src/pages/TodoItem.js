@@ -1,36 +1,36 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { Provider, WhiteSpace, WingBlank, Button } from '@ant-design/react-native';
+import { WhiteSpace, WingBlank, Button } from '@ant-design/react-native';
 
 class TodoItem extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
-    const { todoList, changeItem } = this.props;
+    const { todoList, changeItem, type } = this.props;
     return (
-      <Provider>
+      <View>
         {todoList &&
           todoList.map((item) => (
             <WingBlank key={item.id}>
               <View>
                 <View style={styles.box}>
-                  <Text style={styles.title} >{item.title}</Text>
+                  <Text style={styles.title}>{item.title}</Text>
                   <View style={styles.btnBox}>
-                    <Button type="ghost" style={styles.btn} size="small" onPress={() => changeItem(item.id, item.status)}>完成</Button>
+                    <Button type="ghost" style={styles.btn} onPress={() => changeItem(item.id, item.status)}>
+                      {type === 'done' ? '已完成' : '完成'}
+                    </Button>
                   </View>
                 </View>
                 <WhiteSpace />
               </View>
             </WingBlank>
           ))}
-      </Provider>
-    )
+      </View>
+    );
   }
-
 }
 
 //样式定义
@@ -53,12 +53,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   btn: {
-    fontSize: 18,
+    fontSize: 16,
     height: 32,
     paddingRight: 8,
     paddingLeft: 8,
-    borderRadius:16,
-  }
+    borderRadius: 16,
+  },
 });
 
 export default TodoItem;
