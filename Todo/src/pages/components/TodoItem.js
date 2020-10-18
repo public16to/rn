@@ -1,20 +1,71 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
-import { WhiteSpace, WingBlank, Button } from '@ant-design/react-native';
+import { connect } from 'react-redux';
+import { WhiteSpace, WingBlank, Button, Portal, Toast, Modal } from '@ant-design/react-native';
 import moment from 'moment';
 import momentLocal from 'moment/locale/zh-cn';
 
 moment.defineLocale('zh-cn', momentLocal);
 
+@connect(({ loading }) => ({
+  loading: loading.effects['todo/add'],
+}))
 class TodoItem extends Component {
+  params = {
+    uid: '06eb7955e21f832424c1833a1e9f9daf',
+  };
+
   constructor(props) {
     super(props);
     this.state = {};
   }
 
+  // 改变状态
+  changeItem = (id, status) => {
+    const { dispatch } = this.props;
+    console.log('changeItem', id, status);
+    const data = {
+      status: status === 1 ? 0 : 1,
+    };
+
+    this.key = Toast.loading('加载中...');
+    dispatch({
+      type: 'todo/update',
+      params: this.params,
+      id,
+      data,
+    }).then((res) => {
+      Portal.remove(this.key); // 移除所有的toast
+    });
+  };
+
+  //删除
+  deleteItem = (id, title) => {
+    Modal.alert('确认删除 ' + title, '', [
+      {
+        text: '取消',
+        onPress: () => console.log('cancel'),
+        style: 'cancel',
+      },
+      { text: '确认', onPress: () => this.sendDelete(id), style: 'destructive' },
+    ]);
+  };
+
+  // 发送删除
+  sendDelete = (id) => {
+    const { dispatch } = this.props;
+    this.key = Toast.loading('删除中...');
+    dispatch({
+      type: 'todo/delete',
+      params: this.params,
+      id,
+    }).then((res) => {
+      Portal.remove(this.key); // 移除所有的toast
+    });
+  };
+
   render() {
-    const { todoList, changeItem, type, navigation } = this.props;
-    console.log(todoList, navigation);
+    const { todoList, type, navigation } = this.props;
     return (
       <View>
         {todoList &&
@@ -24,7 +75,8 @@ class TodoItem extends Component {
                 <View style={styles.box}>
                   <Text
                     style={styles.title}
-                    onPress={() => navigation.navigate('Detail', { type: 'update', id: item.id, title: '修改代办' })}
+                    onPress={() => navigation.navigate('Detail', { type: 'update', item: item, title: '编辑代办' })}
+                    onLongPress={() => this.deleteItem(item.id, item.title)}
                   >
                     {item.title}
                   </Text>
@@ -34,7 +86,7 @@ class TodoItem extends Component {
                         ? moment(item.updatetime).format('YYYY-MM-DD HH:mm:ss')
                         : moment(item.addtime).fromNow()}
                     </Text>
-                    <Button type="ghost" style={styles.btn} onPress={() => changeItem(item.id, item.status)}>
+                    <Button type="ghost" style={styles.btn} onPress={() => this.changeItem(item.id, item.status)}>
                       {type === 'done' ? '已完成' : '完成'}
                     </Button>
                   </View>

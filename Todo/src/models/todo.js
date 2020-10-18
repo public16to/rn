@@ -33,6 +33,7 @@ export default {
           params,
         });
       }
+      return response;
     },
     // 删
     *delete({ params, id }, { call, put }) {
@@ -44,12 +45,11 @@ export default {
           params,
         });
       }
+      return response;
     },
     // 改
-    *update({ params, id, data }, { call, put }) {
+    *update({ params, data, id }, { call, put }) {
       const response = yield call(updateTodo, id, data);
-      console.log(response);
-      console.log(params);
       if (Array.isArray(response) === true) {
         // 获取修改后的数据
         yield put({
@@ -57,6 +57,7 @@ export default {
           params,
         });
       }
+      return response;
     },
     // 标签处理
     *tag({ params, id, data }, { call, put }) {

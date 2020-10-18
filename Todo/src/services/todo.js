@@ -54,7 +54,7 @@ export async function addNoticeTodo(id, data) {
 
 // 删除获取todo id数据
 export async function delTodo(id) {
-  return request(`/api/todo/${id}`, {
+  return request(`${API_PATH}/api/todo/${id}`, {
     method: 'DELETE',
   });
 }

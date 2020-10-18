@@ -83,25 +83,6 @@ class Todo extends Component {
     );
   };
 
-  // 改变状态
-  changeItem = (id, status) => {
-    const { dispatch } = this.props;
-    console.log('changeItem', id, status);
-    const data = {
-      status: status === 1 ? 0 : 1,
-    };
-
-    this.key = Toast.loading('加载中...');
-    dispatch({
-      type: 'todo/update',
-      params: this.params,
-      id,
-      data,
-    }).then((res) => {
-      Portal.remove(this.key); // 移除所有的toast
-    });
-  };
-
   // 下拉刷新
   refresh() {
     const { dispatch } = this.props;
@@ -218,7 +199,7 @@ class Todo extends Component {
               <WhiteSpace />
             </WingBlank>
           </View>
-          <TodoItem todoList={doingData} changeItem={this.changeItem} navigation={navigation} />
+          <TodoItem todoList={doingData} navigation={navigation} />
           <View style={styles.listTitle}>
             <WingBlank>
               <WhiteSpace />
@@ -238,9 +219,7 @@ class Todo extends Component {
               <WhiteSpace />
             </WingBlank>
           </View>
-          {doneVisible ? (
-            <TodoItem todoList={doneData} changeItem={this.changeItem} type="done" navigation={navigation} />
-          ) : null}
+          {doneVisible ? <TodoItem todoList={doneData} type="done" navigation={navigation} /> : null}
         </ScrollView>
         <View style={styles.addBtn}>
           <Button
@@ -251,35 +230,6 @@ class Todo extends Component {
             <Icon name="plus" size={32} color="white" />
           </Button>
         </View>
-        {/* <Modal
-          transparent={false}
-          visible={addVisible}
-          animationType="slide-down"
-          maskClosable
-          onClose={() => { this.setState({ addVisible: false }) }}
-        >
-          <View style={{ flex: 1, paddingVertical: 220 }}>
-            <InputItem
-              clear
-              placeholder="自动获取光标"
-              autoFocus
-              onChange={this.titleChange}
-            >
-              标题
-          </InputItem>
-          </View>
-          <WingBlank
-            style={{
-              marginTop: 20,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <Button type="ghost" onPress={() => this.setState({ addVisible: false })}>返回</Button>
-            <Button type="primary" onPress={() => this.sendAdd()}>添加</Button>
-          </WingBlank>
-        </Modal> */}
       </Provider>
     );
   }
