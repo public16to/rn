@@ -180,6 +180,7 @@ class Todo extends Component {
           />
         </View>
         <View style={styles.headerBox}>
+          <Button onPress={() => navigation.navigate('Login', { title: '登录' })}>退出</Button>
           <Text style={styles.headerTitle}>{ssoUser && ssoUser.name}</Text>
           <Text style={styles.headerTitle}>{moment().format('M月D日 dddd')}</Text>
         </View>
@@ -232,9 +233,7 @@ class Todo extends Component {
           <Button
             type="primary"
             style={styles.button}
-            onPress={() =>
-              navigation.navigate('Detail', { type: 'add', title: '新建代办', transition: 'forHorizontal' })
-            }
+            onPress={() => navigation.navigate('Detail', { type: 'add', title: '新建代办' })}
           >
             <Icon name="plus" size={32} color="white" />
           </Button>

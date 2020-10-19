@@ -7,6 +7,7 @@ import createLoading from 'dva-loading';
 import models from './src/models';
 import Todo from './src/pages/Todo';
 import Detail from './src/pages/Detail';
+import Login from './src/pages/Login';
 
 const app = create(); // 创建dva实例，可传递配置参数
 app.use(createLoading()); // 增加loading属性
@@ -31,11 +32,8 @@ export default class TodoApp extends Component {
             }}
           >
             <Stack.Screen name="Todo" options={{ title: '返回', headerShown: false }} component={Todo} />
-            <Stack.Screen
-              name="Detail"
-              options={({ route }) => ({ title: route.params.title, gestureDirection: 'horizontal' })}
-              component={Detail}
-            />
+            <Stack.Screen name="Login" options={({ route }) => ({ title: route.params.title })} component={Login} />
+            <Stack.Screen name="Detail" options={({ route }) => ({ title: route.params.title })} component={Detail} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

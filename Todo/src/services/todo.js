@@ -89,7 +89,7 @@ export async function sendCaptchaApi(data) {
 // 登录
 export async function sendLoginApi(data) {
   const { ...restParams } = data;
-  return request('/api/login', {
+  return request(`${API_PATH}/api/login`, {
     method: 'POST',
     body: {
       ...restParams,
