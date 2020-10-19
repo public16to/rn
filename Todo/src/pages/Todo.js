@@ -4,11 +4,10 @@ import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import { Toast, Provider, WhiteSpace, Portal, Button, Icon, WingBlank } from '@ant-design/react-native';
 import moment from 'moment';
+import momentLocal from 'moment/locale/zh-cn';
 import TodoItem from './components/TodoItem';
 
-moment.updateLocale('zh-cn', {
-  weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-});
+moment.defineLocale('zh-cn', momentLocal);
 
 @connect(({ todo, user, setting, loading }) => ({
   todoList: todo.list,
@@ -67,7 +66,7 @@ class Todo extends Component {
       }
       // 是否显示隐藏
       CookieManager.get('http://todo.16to.com').then((cookies) => {
-        if (cookies) {
+        if (cookies && cookies.doneVisible) {
           this.setState({
             doneVisible: cookies.doneVisible.value === 'true' ? true : false,
           });

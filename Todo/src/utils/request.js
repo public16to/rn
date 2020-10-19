@@ -22,9 +22,9 @@ const checkStatus = (response) => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
-  // const errortext = codeMessage[response.status] || response.statusText;
+  const errortext = codeMessage[response.status] || response.statusText;
   // Toast.fail(`请求错误 ${response.status}: ${response.url}`, 3);
-  return false;
+  return errortext;
 };
 
 /**
