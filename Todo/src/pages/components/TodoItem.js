@@ -75,7 +75,14 @@ class TodoItem extends Component {
                 <View style={styles.box}>
                   <Text
                     style={styles.title}
-                    onPress={() => navigation.navigate('Detail', { type: 'update', item: item, title: '编辑代办' })}
+                    onPress={() =>
+                      navigation.navigate('Detail', {
+                        type: 'update',
+                        item: item,
+                        title: '编辑代办',
+                        transition: 'forHorizontal',
+                      })
+                    }
                     onLongPress={() => this.deleteItem(item.id, item.title)}
                   >
                     {item.title}

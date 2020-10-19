@@ -61,13 +61,17 @@ class Todo extends Component {
       type: 'user/fetchUser',
     }).then(() => {
       const uid = CookieManager.get('http://todo.16to.com');
+      console.log(uid);
       if (uid === undefined) {
-        window.location.href = '/login';
         return;
       }
       // 是否显示隐藏
-      this.setState({
-        // doneVisible: localStorage.getItem("doneVisible") !== 'false'
+      CookieManager.get('http://todo.16to.com').then((cookies) => {
+        if (cookies) {
+          this.setState({
+            doneVisible: cookies.doneVisible.value === 'true' ? true : false,
+          });
+        }
       });
       // 获取todo setting
       // this.selectSetting();
@@ -142,6 +146,10 @@ class Todo extends Component {
   // 隐藏已完成的
   showHideDone = () => {
     const { doneVisible } = this.state;
+    CookieManager.set('http://todo.16to.com', {
+      name: 'doneVisible',
+      value: doneVisible ? 'false' : 'true',
+    });
     this.setState({
       doneVisible: !doneVisible,
     });
@@ -225,7 +233,9 @@ class Todo extends Component {
           <Button
             type="primary"
             style={styles.button}
-            onPress={() => navigation.navigate('Detail', { type: 'add', title: '新建代办' })}
+            onPress={() =>
+              navigation.navigate('Detail', { type: 'add', title: '新建代办', transition: 'forHorizontal' })
+            }
           >
             <Icon name="plus" size={32} color="white" />
           </Button>

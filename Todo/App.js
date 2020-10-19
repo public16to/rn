@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import { create } from 'dva-core';
 import createLoading from 'dva-loading';
@@ -23,9 +23,19 @@ export default class TodoApp extends Component {
     return (
       <Provider store={store}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Todo">
+          <Stack.Navigator
+            initialRouteName="Todo"
+            screenOptions={{
+              // 添加这一行会实现安卓下页面的左右切换，默认是从下到上
+              cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+            }}
+          >
             <Stack.Screen name="Todo" options={{ title: '返回', headerShown: false }} component={Todo} />
-            <Stack.Screen name="Detail" options={({ route }) => ({ title: route.params.title })} component={Detail} />
+            <Stack.Screen
+              name="Detail"
+              options={({ route }) => ({ title: route.params.title, gestureDirection: 'horizontal' })}
+              component={Detail}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

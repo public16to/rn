@@ -15,6 +15,8 @@ class Detail extends Component {
     uid: '06eb7955e21f832424c1833a1e9f9daf',
   };
 
+  // textInputRefer = '';
+
   constructor(props) {
     super(props);
     this.state = {
@@ -24,6 +26,18 @@ class Detail extends Component {
 
   componentDidMount() {
     this.getDetail();
+    // 聚焦到输入框
+    if (this.textInputRefer) {
+      this.textInputRefer.focus();
+    }
+  }
+
+  componentDidUpdate() {
+    // 聚焦到输入框
+    console.log(this.textInputRefer);
+    if (this.textInputRefer !== undefined) {
+      this.textInputRefer.focus();
+    }
   }
 
   // 获取待办详细
@@ -32,6 +46,10 @@ class Detail extends Component {
     if (route && route.params && route.params.item) {
       this.setState({
         addValue: route.params.item.title,
+      });
+    } else {
+      this.setState({
+        addValue: '',
       });
     }
   }
@@ -86,7 +104,17 @@ class Detail extends Component {
         <View>
           <View style={styles.inputBox}>
             <WingBlank>
-              <InputItem clear placeholder="自动获取光标" autoFocus defaultValue={addValue} onChange={this.titleChange}>
+              <InputItem
+                clear
+                placeholder="待办内容"
+                defaultValue={addValue}
+                autoFocus
+                onChange={this.titleChange}
+                underlineColorAndroid="transparent"
+                ref={(c) => {
+                  this.textInputRefer = c;
+                }}
+              >
                 标题
               </InputItem>
             </WingBlank>
