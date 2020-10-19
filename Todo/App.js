@@ -32,7 +32,11 @@ export default class TodoApp extends Component {
             }}
           >
             <Stack.Screen name="Todo" options={{ title: '返回', headerShown: false }} component={Todo} />
-            <Stack.Screen name="Login" options={({ route }) => ({ title: route.params.title })} component={Login} />
+            <Stack.Screen
+              name="Login"
+              options={({ route }) => ({ title: route.params.title, headerLeft: null })}
+              component={Login}
+            />
             <Stack.Screen name="Detail" options={({ route }) => ({ title: route.params.title })} component={Detail} />
           </Stack.Navigator>
         </NavigationContainer>

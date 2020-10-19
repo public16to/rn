@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { WingBlank, Button, InputItem, Toast, Provider, Text } from '@ant-design/react-native';
+import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import momentLocal from 'moment/locale/zh-cn';
@@ -8,7 +9,7 @@ import momentLocal from 'moment/locale/zh-cn';
 moment.defineLocale('zh-cn', momentLocal);
 
 @connect(({ loading }) => ({
-  loading: loading.effects['todo/add'],
+  loading: loading.effects['login/login'],
 }))
 class Detail extends Component {
   constructor(props) {
@@ -39,23 +40,32 @@ class Detail extends Component {
     const { phoneValue, captchaValue } = this.state;
     const { navigation } = this.props;
     if (phoneValue === '') {
-      Toast.offline('手机号不能为空');
+      Toast.offline('手机号不能为空', 1.5);
       return;
     }
     if (captchaValue === '') {
-      Toast.offline('手机验证码不能为空');
+      Toast.offline('手机验证码不能为空', 1.5);
       return;
     }
     const { dispatch } = this.props;
     const data = {
-      phoneValue,
-      captchaValue,
+      mobile: phoneValue,
+      vcode: captchaValue,
     };
     dispatch({
       type: 'login/login',
       data,
     }).then((res) => {
-      navigation.navigate('Todo');
+      if (res && res.uid) {
+        CookieManager.set('http://todo.16to.com', {
+          name: 'uid',
+          value: res.uid,
+        }).then(() => {
+          navigation.navigate('Todo');
+        });
+      } else {
+        Toast.offline('手机验证码错误', 1.5);
+      }
     });
   }
 
@@ -74,6 +84,7 @@ class Detail extends Component {
   };
 
   render() {
+    const { loading } = this.props;
     return (
       <Provider>
         <View style={styles.box}>
@@ -100,7 +111,7 @@ class Detail extends Component {
             </WingBlank>
           </View>
           <WingBlank>
-            <Button type="primary" onPress={() => this.sendLogin()}>
+            <Button type="primary" onPress={() => this.sendLogin()} loading={loading}>
               确定
             </Button>
           </WingBlank>
@@ -119,20 +130,16 @@ const styles = StyleSheet.create({
   },
 
   titleBox: {
-    // flex: 1,
     paddingVertical: 30,
     flexDirection: 'row',
     justifyContent: 'center',
   },
   bannerBox: {
-    // flex: 1,
     paddingVertical: 10,
     flexDirection: 'row',
     justifyContent: 'center',
   },
   inputBox: {
-    // flex: 1,
-    // flexDirection: 'row',
     paddingVertical: 50,
     textAlign: 'center',
     alignContent: 'center',
@@ -141,8 +148,10 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'center',
     fontSize: 30,
+    fontWeight: 'bold',
   },
   banner: {
+    color: '#666',
     includeFontPadding: false,
     textAlignVertical: 'center',
     fontSize: 18,
