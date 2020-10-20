@@ -78,7 +78,7 @@ export async function updateTodoSetting(uid, data) {
 // 发送验证码
 export async function sendCaptchaApi(data) {
   const { ...restParams } = data;
-  return request('/api/captcha', {
+  return request(`${API_PATH}/api/captcha`, {
     method: 'POST',
     body: {
       ...restParams,

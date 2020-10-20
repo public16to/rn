@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { WingBlank, Button, InputItem, Toast, Provider, Text } from '@ant-design/react-native';
+import { View, StyleSheet, TextInput } from 'react-native';
+import { WingBlank, Button, Toast, Provider, Text, WhiteSpace } from '@ant-design/react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import momentLocal from 'moment/locale/zh-cn';
+import { checkPhone } from '../utils/utils';
 
 moment.defineLocale('zh-cn', momentLocal);
 
@@ -22,24 +23,27 @@ class Detail extends Component {
 
   componentDidMount() {
     // 聚焦到输入框
-    if (this.textInputRefer) {
-      // this.textInputRefer.focus();
-    }
+    // if (this.textInputRefer) {
+    //   this.textInputRefer.focus();
+    // }
   }
 
   componentDidUpdate() {
     // 聚焦到输入框
     console.log(this.textInputRefer);
-    if (this.textInputRefer !== undefined) {
-      // this.textInputRefer.focus();
-    }
+    // if (this.textInputRefer !== undefined) {
+    //   this.textInputRefer.focus();
+    // }
   }
 
   // 发送登录
   sendLogin() {
     const { phoneValue, captchaValue } = this.state;
-    const { navigation } = this.props;
+    const { navigation, dispatch } = this.props;
     if (phoneValue === '') {
+      if (this.textInputRefer) {
+        this.textInputRefer.focus();
+      }
       Toast.offline('手机号不能为空', 1.5);
       return;
     }
@@ -47,7 +51,6 @@ class Detail extends Component {
       Toast.offline('手机验证码不能为空', 1.5);
       return;
     }
-    const { dispatch } = this.props;
     const data = {
       mobile: phoneValue,
       vcode: captchaValue,
@@ -66,6 +69,29 @@ class Detail extends Component {
       } else {
         Toast.offline('手机验证码错误', 1.5);
       }
+    });
+  }
+
+  // 发送验证码
+  sendCaptcha() {
+    const { dispatch } = this.props;
+    const { phoneValue } = this.state;
+    if (!checkPhone(phoneValue)) {
+      if (this.textInputRefer) {
+        this.textInputRefer.focus();
+      }
+      Toast.offline('手机号码有误，请确认', 1.5);
+      return;
+    }
+    const data = {
+      mobile: phoneValue,
+    };
+    dispatch({
+      type: 'login/sendCaptcha',
+      data,
+    }).then((res) => {
+      console.log(res);
+      Toast.success('手机验证码发送成功', 1.5);
     });
   }
 
@@ -94,22 +120,37 @@ class Detail extends Component {
           <View style={styles.bannerBox}>
             <Text style={styles.banner}>可能是杭州滨江区最好用的代办应用</Text>
           </View>
-          <View style={styles.inputBox}>
-            <WingBlank>
-              <InputItem
-                clear
-                placeholder="请输入手机号"
-                autoFocus
-                onChange={this.phoneChange}
-                ref={(c) => {
-                  this.textInputRefer = c;
-                }}
-              />
-            </WingBlank>
-            <WingBlank>
-              <InputItem clear placeholder="请输入手机验证码" onChange={this.captchaChange} />
-            </WingBlank>
-          </View>
+          <WingBlank>
+            <View style={styles.inputBox}>
+              <View style={styles.mobileBox}>
+                <TextInput
+                  clear
+                  placeholder="请输入手机号"
+                  placeholderTextColor="#666"
+                  style={styles.mobile}
+                  autoFocus
+                  onChange={this.phoneChange}
+                  ref={(c) => {
+                    this.textInputRefer = c;
+                  }}
+                />
+              </View>
+              <WhiteSpace />
+              <View style={styles.captchaBox}>
+                <TextInput
+                  clear
+                  placeholder="请输入手机验证码"
+                  placeholderTextColor="#666"
+                  onChange={this.captchaChange}
+                  style={styles.captcha}
+                />
+                <Button type="ghost" onPress={() => this.sendCaptcha()}>
+                  获取验证码
+                </Button>
+              </View>
+            </View>
+          </WingBlank>
+
           <WingBlank>
             <Button type="primary" onPress={() => this.sendLogin()} loading={loading}>
               确定
@@ -155,6 +196,24 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     textAlignVertical: 'center',
     fontSize: 18,
+  },
+  captchaBox: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  mobile: {
+    fontSize: 18,
+    padding: 8,
+    backgroundColor: '#fff',
+    height: 45,
+  },
+  captcha: {
+    fontSize: 18,
+    padding: 8,
+    backgroundColor: '#fff',
+    width: '60%',
+    height: 45,
   },
 });
 
