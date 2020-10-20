@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput } from 'react-native';
+import { View, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { WingBlank, Button, Toast, Provider, Text, WhiteSpace } from '@ant-design/react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
@@ -7,6 +7,7 @@ import moment from 'moment';
 import momentLocal from 'moment/locale/zh-cn';
 import { checkPhone } from '../utils/utils';
 
+const screenWidth = Dimensions.get('window').width;
 moment.defineLocale('zh-cn', momentLocal);
 
 @connect(({ loading }) => ({
@@ -23,17 +24,9 @@ class Detail extends Component {
 
   componentDidMount() {
     // 聚焦到输入框
-    // if (this.textInputRefer) {
-    //   this.textInputRefer.focus();
-    // }
-  }
-
-  componentDidUpdate() {
-    // 聚焦到输入框
-    console.log(this.textInputRefer);
-    // if (this.textInputRefer !== undefined) {
-    //   this.textInputRefer.focus();
-    // }
+    if (this.mobileInputRefer) {
+      this.mobileInputRefer.focus();
+    }
   }
 
   // 发送登录
@@ -41,8 +34,8 @@ class Detail extends Component {
     const { phoneValue, captchaValue } = this.state;
     const { navigation, dispatch } = this.props;
     if (phoneValue === '') {
-      if (this.textInputRefer) {
-        this.textInputRefer.focus();
+      if (this.mobileInputRefer) {
+        this.mobileInputRefer.focus();
       }
       Toast.offline('手机号不能为空', 1.5);
       return;
@@ -67,6 +60,9 @@ class Detail extends Component {
           navigation.navigate('Todo');
         });
       } else {
+        if (this.captchaInputRefer) {
+          this.captchaInputRefer.focus();
+        }
         Toast.offline('手机验证码错误', 1.5);
       }
     });
@@ -77,8 +73,8 @@ class Detail extends Component {
     const { dispatch } = this.props;
     const { phoneValue } = this.state;
     if (!checkPhone(phoneValue)) {
-      if (this.textInputRefer) {
-        this.textInputRefer.focus();
+      if (this.mobileInputRefer) {
+        this.mobileInputRefer.focus();
       }
       Toast.offline('手机号码有误，请确认', 1.5);
       return;
@@ -90,8 +86,14 @@ class Detail extends Component {
       type: 'login/sendCaptcha',
       data,
     }).then((res) => {
-      console.log(res);
-      Toast.success('手机验证码发送成功', 1.5);
+      if (res && res.cc === 0) {
+        Toast.success('手机验证码发送成功', 1.5);
+        if (this.captchaInputRefer) {
+          this.captchaInputRefer.focus();
+        }
+      } else {
+        Toast.success('手机验证码发送失败', 1.5);
+      }
     });
   }
 
@@ -129,9 +131,9 @@ class Detail extends Component {
                   placeholderTextColor="#666"
                   style={styles.mobile}
                   autoFocus
-                  onChange={this.phoneChange}
+                  onChangeText={this.phoneChange}
                   ref={(c) => {
-                    this.textInputRefer = c;
+                    this.mobileInputRefer = c;
                   }}
                 />
               </View>
@@ -141,10 +143,13 @@ class Detail extends Component {
                   clear
                   placeholder="请输入手机验证码"
                   placeholderTextColor="#666"
-                  onChange={this.captchaChange}
+                  onChangeText={this.captchaChange}
                   style={styles.captcha}
+                  ref={(c) => {
+                    this.captchaInputRefer = c;
+                  }}
                 />
-                <Button type="ghost" onPress={() => this.sendCaptcha()}>
+                <Button style={styles.btn} type="ghost" onPress={() => this.sendCaptcha()}>
                   获取验证码
                 </Button>
               </View>
@@ -206,14 +211,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 8,
     backgroundColor: '#fff',
-    height: 45,
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 6,
   },
   captcha: {
     fontSize: 18,
     padding: 8,
     backgroundColor: '#fff',
-    width: '60%',
-    height: 45,
+    width: screenWidth - 170,
+    height: 50,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 6,
+  },
+  btn: {
+    height: 48,
+    width: 130,
+    backgroundColor: '#fff',
   },
 });
 

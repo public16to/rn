@@ -1,6 +1,7 @@
 // 判断是否是手机号
 export function checkPhone(mobile) {
   let phone = mobile;
+  console.log(phone);
   if (!/^1[3456789]\d{9}$/.test(phone)) {
     return false;
   } else {
