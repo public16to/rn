@@ -18,7 +18,7 @@ moment.defineLocale('zh-cn', momentLocal);
 class Todo extends Component {
   key = '';
   params = {
-    uid: '06eb7955e21f832424c1833a1e9f9daf',
+    uid: '',
   };
 
   constructor(props) {
@@ -35,14 +35,25 @@ class Todo extends Component {
   }
 
   componentDidMount() {
-    this.getUserData();
-    this.getTodoData();
-    this.fixStatusBar();
+    const { navigation } = this.props;
+    CookieManager.get('http://todo.16to.com').then((cookies) => {
+      console.log(cookies.uid);
+      if (cookies && cookies.uid === undefined) {
+        navigation.navigate('Login');
+        return;
+      }
+      this.params.uid = cookies.uid.value;
+      console.log(this.params);
+      this.getUserData();
+      this.getTodoData();
+      this.fixStatusBar();
+    });
   }
 
   // 获取数据
   getTodoData() {
     const { dispatch } = this.props;
+    console.log(this.params);
     this.key = Toast.loading('加载中...');
     dispatch({
       type: 'todo/select',
@@ -58,12 +69,8 @@ class Todo extends Component {
     // 获取用户信息
     dispatch({
       type: 'user/fetchUser',
+      params: this.params,
     }).then(() => {
-      const uid = CookieManager.get('http://todo.16to.com');
-      console.log(uid);
-      if (uid === undefined) {
-        return;
-      }
       // 是否显示隐藏
       CookieManager.get('http://todo.16to.com').then((cookies) => {
         if (cookies && cookies.doneVisible) {
@@ -154,6 +161,14 @@ class Todo extends Component {
     });
   };
 
+  // 退出登录
+  logout = () => {
+    const { navigation } = this.props;
+    CookieManager.clearAll().then(() => {
+      navigation.navigate('Login');
+    });
+  };
+
   render() {
     const { todoList, ssoUser, navigation } = this.props;
     const { refreshingLoading, doneVisible } = this.state;
@@ -180,8 +195,10 @@ class Todo extends Component {
           />
         </View>
         <View style={styles.headerBox}>
-          <Button onPress={() => navigation.navigate('Login', { title: '登录' })}>退出</Button>
-          <Text style={styles.headerTitle}>{ssoUser && ssoUser.name}</Text>
+          {/* <Button onPress={() => }>退出</Button> */}
+          <Text style={styles.headerTitle} onPress={() => this.logout()}>
+            {ssoUser && ssoUser.name}
+          </Text>
           <Text style={styles.headerTitle}>{moment().format('M月D日 dddd')}</Text>
         </View>
         <ScrollView
@@ -207,7 +224,7 @@ class Todo extends Component {
               <WhiteSpace />
             </WingBlank>
           </View>
-          <TodoItem todoList={doingData} navigation={navigation} />
+          <TodoItem todoList={doingData} uid={this.params.uid} navigation={navigation} />
           <View style={styles.listTitle}>
             <WingBlank>
               <WhiteSpace />
@@ -227,7 +244,9 @@ class Todo extends Component {
               <WhiteSpace />
             </WingBlank>
           </View>
-          {doneVisible ? <TodoItem todoList={doneData} type="done" navigation={navigation} /> : null}
+          {doneVisible ? (
+            <TodoItem todoList={doneData} uid={this.params.uid} type="done" navigation={navigation} />
+          ) : null}
         </ScrollView>
         <View style={styles.addBtn}>
           <Button

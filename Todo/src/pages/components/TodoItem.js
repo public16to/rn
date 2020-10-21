@@ -11,13 +11,11 @@ moment.defineLocale('zh-cn', momentLocal);
   loading: loading.effects['todo/add'],
 }))
 class TodoItem extends Component {
-  params = {
-    uid: '06eb7955e21f832424c1833a1e9f9daf',
-  };
-
+  params = {};
   constructor(props) {
     super(props);
     this.state = {};
+    this.params.uid = this.props.uid;
   }
 
   // 改变状态

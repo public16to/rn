@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, Dimensions } from 'react-native';
+import { View, StyleSheet, TextInput, Dimensions, Alert } from 'react-native';
 import { WingBlank, Button, Toast, Provider, Text, WhiteSpace } from '@ant-design/react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
@@ -19,10 +19,26 @@ class Detail extends Component {
     this.state = {
       phoneValue: '',
       captchaValue: '',
+      count: 0,
     };
   }
 
   componentDidMount() {
+    const { navigation } = this.props;
+    navigation.addListener('beforeRemove', (e) => {
+      const action = e.data.action;
+
+      e.preventDefault();
+
+      Alert.alert('Discard changes?', 'You have unsaved changes. Are you sure to discard them and leave the screen?', [
+        { text: "Don't leave", style: 'cancel', onPress: () => {} },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: () => navigation.dispatch(action),
+        },
+      ]);
+    });
     // 聚焦到输入框
     if (this.mobileInputRefer) {
       this.mobileInputRefer.focus();
@@ -88,6 +104,7 @@ class Detail extends Component {
     }).then((res) => {
       if (res && res.cc === 0) {
         Toast.success('手机验证码发送成功', 1.5);
+        this.runGetCaptchaCountDown();
         if (this.captchaInputRefer) {
           this.captchaInputRefer.focus();
         }
@@ -111,8 +128,22 @@ class Detail extends Component {
     });
   };
 
+  // 验证码倒计时
+  runGetCaptchaCountDown = () => {
+    let count = 59;
+    this.setState({ count });
+    this.interval = window.setInterval(() => {
+      count -= 1;
+      this.setState({ count });
+      if (count === 0) {
+        clearInterval(this.interval);
+      }
+    }, 1000);
+  };
+
   render() {
     const { loading } = this.props;
+    const { count } = this.state;
     return (
       <Provider>
         <View style={styles.box}>
@@ -149,8 +180,8 @@ class Detail extends Component {
                     this.captchaInputRefer = c;
                   }}
                 />
-                <Button style={styles.btn} type="ghost" onPress={() => this.sendCaptcha()}>
-                  获取验证码
+                <Button disabled={!!count} style={styles.btn} type="ghost" onPress={() => this.sendCaptcha()}>
+                  {count ? `${count} 秒` : '获取验证码'}
                 </Button>
               </View>
             </View>

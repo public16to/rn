@@ -8,6 +8,7 @@ export default {
   // 状态值
   state: {
     list: [],
+    params: {},
   },
 
   // action和数据异步处理

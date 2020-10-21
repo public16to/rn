@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { WingBlank, Button, InputItem, Toast, Provider } from '@ant-design/react-native';
+import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import momentLocal from 'moment/locale/zh-cn';
@@ -11,21 +12,29 @@ moment.defineLocale('zh-cn', momentLocal);
   loading: loading.effects['todo/add'],
 }))
 class Detail extends Component {
-  params = {
-    uid: '06eb7955e21f832424c1833a1e9f9daf',
-  };
-
-  // textInputRefer = '';
+  params = {};
 
   constructor(props) {
     super(props);
     this.state = {
       addValue: '',
     };
+    this.params.uid = props.uid;
   }
 
   componentDidMount() {
-    this.getDetail();
+    const { navigation } = this.props;
+    CookieManager.get('http://todo.16to.com').then((cookies) => {
+      console.log(cookies.uid);
+      if (cookies && cookies.uid === undefined) {
+        navigation.navigate('Login');
+        return;
+      }
+      this.params.uid = cookies.uid.value;
+      console.log(this.params);
+      this.getDetail();
+    });
+
     // 聚焦到输入框
     if (this.textInputRefer) {
       this.textInputRefer.focus();
