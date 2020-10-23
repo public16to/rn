@@ -35,6 +35,7 @@ class Todo extends Component {
   }
 
   componentDidMount() {
+    console.log(Platform.OS);
     const { navigation } = this.props;
     this.init();
     navigation.addListener('focus', (e) => {
@@ -46,7 +47,7 @@ class Todo extends Component {
     const { navigation } = this.props;
     CookieManager.get('http://todo.16to.com').then((cookies) => {
       if (cookies && cookies.uid === undefined) {
-        // Toast.loading('请先登录', 1);
+        // Toast.info('请先登录', 1);
         navigation.navigate('Login');
         return;
       }
@@ -63,10 +64,11 @@ class Todo extends Component {
     const { dispatch } = this.props;
     console.log(this.params);
     this.key = Toast.loading('加载中...');
+    // Portal.remove(this.key); // 移除所有的toast
     dispatch({
       type: 'todo/select',
       params: this.params,
-    }).then((res) => {
+    }).then(() => {
       Portal.remove(this.key); // 移除所有的toast
     });
   }
@@ -292,7 +294,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: Platform.OS === 'ios' ? 34 : 0,
+    height: 34,
   },
   scroll: {
     flex: 1,

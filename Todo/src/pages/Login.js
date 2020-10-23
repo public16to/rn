@@ -25,9 +25,10 @@ class Detail extends Component {
 
   componentDidMount() {
     const { navigation } = this.props;
-    navigation.addListener('beforeRemove', (e) => {
-      // console.log(e);
-      // e.preventDefault();
+    navigation.addListener('focus', (e) => {
+      if (this.mobileInputRefer) {
+        this.mobileInputRefer.focus();
+      }
     });
     // 聚焦到输入框
     if (this.mobileInputRefer) {
@@ -76,6 +77,14 @@ class Detail extends Component {
       } else {
         if (this.captchaInputRefer) {
           this.captchaInputRefer.focus();
+        }
+        if (res && res.cc === 2) {
+          Toast.offline('手机验证码错误', 1.5);
+          return;
+        }
+        if (res && res.cc === 3) {
+          Toast.offline('验证码已过期，请重新获取', 1.5);
+          return;
         }
         Toast.offline('手机验证码错误', 1.5);
       }

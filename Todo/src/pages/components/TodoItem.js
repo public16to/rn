@@ -20,7 +20,8 @@ class TodoItem extends Component {
 
   // 改变状态
   changeItem = (id, status) => {
-    const { dispatch } = this.props;
+    const { dispatch, uid } = this.props;
+    this.params.uid = uid;
     console.log('changeItem', id, status);
     const data = {
       status: status === 1 ? 0 : 1,
@@ -51,7 +52,8 @@ class TodoItem extends Component {
 
   // 发送删除
   sendDelete = (id) => {
-    const { dispatch } = this.props;
+    const { dispatch, uid } = this.props;
+    this.params.uid = uid;
     this.key = Toast.loading('删除中...');
     dispatch({
       type: 'todo/delete',
