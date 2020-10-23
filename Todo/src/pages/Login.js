@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TextInput, Dimensions, Alert } from 'react-native';
+import { View, StyleSheet, TextInput, Dimensions } from 'react-native';
 import { WingBlank, Button, Toast, Provider, Text, WhiteSpace } from '@ant-design/react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
@@ -26,23 +26,19 @@ class Detail extends Component {
   componentDidMount() {
     const { navigation } = this.props;
     navigation.addListener('beforeRemove', (e) => {
-      const action = e.data.action;
-
-      e.preventDefault();
-
-      Alert.alert('Discard changes?', 'You have unsaved changes. Are you sure to discard them and leave the screen?', [
-        { text: "Don't leave", style: 'cancel', onPress: () => {} },
-        {
-          text: 'Discard',
-          style: 'destructive',
-          onPress: () => navigation.dispatch(action),
-        },
-      ]);
+      // console.log(e);
+      // e.preventDefault();
     });
     // 聚焦到输入框
     if (this.mobileInputRefer) {
       this.mobileInputRefer.focus();
     }
+  }
+
+  componentWillUnmount() {
+    this.setState = () => {
+      return;
+    };
   }
 
   // 发送登录
@@ -72,8 +68,10 @@ class Detail extends Component {
         CookieManager.set('http://todo.16to.com', {
           name: 'uid',
           value: res.uid,
-        }).then(() => {
-          navigation.navigate('Todo');
+        }).then((done) => {
+          console.log(done);
+          console.log(res, res.uid);
+          setTimeout(() => navigation.navigate('Todo'), 0);
         });
       } else {
         if (this.captchaInputRefer) {

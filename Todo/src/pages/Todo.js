@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StatusBar, StyleSheet, ScrollView, RefreshControl, Platform } from 'react-native';
 import CookieManager from '@react-native-community/cookies';
 import { connect } from 'react-redux';
-import { Toast, Provider, WhiteSpace, Portal, Button, Icon, WingBlank } from '@ant-design/react-native';
+import { Toast, Provider, WhiteSpace, Portal, Button, Icon, WingBlank, Modal } from '@ant-design/react-native';
 import moment from 'moment';
 import momentLocal from 'moment/locale/zh-cn';
 import TodoItem from './components/TodoItem';
@@ -36,9 +36,17 @@ class Todo extends Component {
 
   componentDidMount() {
     const { navigation } = this.props;
+    this.init();
+    navigation.addListener('focus', (e) => {
+      this.init();
+    });
+  }
+
+  init() {
+    const { navigation } = this.props;
     CookieManager.get('http://todo.16to.com').then((cookies) => {
-      console.log(cookies.uid);
       if (cookies && cookies.uid === undefined) {
+        // Toast.loading('请先登录', 1);
         navigation.navigate('Login');
         return;
       }
@@ -169,6 +177,18 @@ class Todo extends Component {
     });
   };
 
+  // 退出登录按钮
+  logoutBtn = () => {
+    Modal.alert('退出登录', '', [
+      {
+        text: '取消',
+        onPress: () => console.log('cancel'),
+        style: 'cancel',
+      },
+      { text: '确认', onPress: () => this.logout(), style: 'destructive' },
+    ]);
+  };
+
   render() {
     const { todoList, ssoUser, navigation } = this.props;
     const { refreshingLoading, doneVisible } = this.state;
@@ -196,7 +216,7 @@ class Todo extends Component {
         </View>
         <View style={styles.headerBox}>
           {/* <Button onPress={() => }>退出</Button> */}
-          <Text style={styles.headerTitle} onPress={() => this.logout()}>
+          <Text style={styles.headerTitle} onPress={() => this.logoutBtn()}>
             {ssoUser && ssoUser.name}
           </Text>
           <Text style={styles.headerTitle}>{moment().format('M月D日 dddd')}</Text>
@@ -207,7 +227,12 @@ class Todo extends Component {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           refreshControl={
-            <RefreshControl refreshing={refreshingLoading} onRefresh={() => this.refresh()} title={'正在刷新...'} />
+            <RefreshControl
+              titleColor="#666"
+              refreshing={refreshingLoading}
+              onRefresh={() => this.refresh()}
+              title={'正在刷新...'}
+            />
           }
         >
           <View style={styles.listTitle}>

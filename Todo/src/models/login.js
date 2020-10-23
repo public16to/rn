@@ -18,12 +18,8 @@ export default {
       return response;
     },
     // 登录
-    *login({ data }, { call, put }) {
+    *login({ data }, { call }) {
       const response = yield call(sendLoginApi, data);
-      yield put({
-        type: 'queryInfo',
-        payload: response,
-      });
       return response;
     },
   },
